@@ -33,6 +33,21 @@ def get_image_captioning_model():
     jitter=backoff.full_jitter,
 )
 def caption_image(image: Image) -> Union[str, None]:
+    """
+    Generate a caption for the given image.
+
+    Args:
+        image (PIL.Image.Image): The image to generate a caption for.
+
+    Returns:
+        Union[str, None]: The generated caption or None if the caption\
+        could not be generated (e.g. due to rate limiting, safety filters,\
+        etc.).
+
+    Raises:
+        google.api_core.exceptions.*: Any exceptions raised by the API. These\
+        exceptions may be due to invalid API keys, unsupported locations, etc.
+    """
     model = get_image_captioning_model()
     prompt = random.choice(PROMPTS)  # randomly select a prompt
 

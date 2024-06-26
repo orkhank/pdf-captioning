@@ -12,6 +12,16 @@ from .image_captioning.image_captioning import caption_image
 def extract_images_from_pdf(
     pdf_reader: PdfReader,
 ) -> Dict[int, List[ImageFile]]:
+    """
+    Extract images from a PDF file.
+
+    Args:
+        pdf_reader (PdfReader): The PDF reader object.
+
+    Returns:
+        Dict[int, List[ImageFile]]: A dictionary mapping page numbers to a\
+        list of images found on that page.
+    """
     images: Dict[int, List[ImageFile]] = {}
 
     for page in pdf_reader.pages:
