@@ -1,5 +1,7 @@
 import textwrap
 
+# The prompts are used to generate captions for images
+# The prompts are taken from this paper: https://arxiv.org/abs/2406.10328v1
 _RAW_PROMPTS = [
     """
     Describe the image in detail. Please specify any objects within the
