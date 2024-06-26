@@ -11,7 +11,8 @@ from .utils import (extract_images_from_pdf, format_extracted_data,
 def parse_args(args: Optional[Sequence[str]] = None) -> Dict[str, Any]:
     parser = argparse.ArgumentParser(
         prog="pdf_image_captioner",
-        description="caption images in a PDF file using generative AI",
+        description="Extract text from a PDF file and generate "
+        "captions for images.",
     )
 
     parser.add_argument(
