@@ -1,12 +1,11 @@
 import argparse
 import sys
-import time
 from typing import Any, Dict, Optional, Sequence
 
 from pypdf import PdfReader
 
-from .image_captioning.image_captioning import caption_image
-from .utils import extract_images_from_pdf
+from .utils import (extract_images_from_pdf, format_extracted_data,
+                    generate_image_captions)
 
 
 def parse_args(args: Optional[Sequence[str]] = None) -> Dict[str, Any]:
@@ -21,6 +20,23 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Dict[str, Any]:
         help="the path to the PDF file",
     )
 
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=str,
+        help="the path to the output file. If not provided, the extracted "
+        "data will be printed to the standard output.",
+    )
+    parser.add_argument(
+        "--seconds-to-sleep-between-requests",
+        "-s",
+        type=float,
+        default=1.0,
+        help="the number of seconds to sleep between requests to the image "
+        "captioning service. This is useful to avoid rate limiting. "
+        "Defaults to %(default)s seconds.",
+    )
+
     return vars(parser.parse_args(args))
 
 
@@ -29,38 +45,13 @@ def main(args: Optional[Sequence[str]] = None) -> int:
 
     pdf_reader = PdfReader(parsed_args["pdf"])
 
-    images = extract_images_from_pdf(pdf_reader)
-    image_captions: Dict[int, Dict[str, str]] = {}
-
-    for page_number, page_images in images.items():
-        for image_file in page_images:
-            if not image_file.image:
-                print(
-                    f"[!] Skipping image {image_file.name} on page "
-                    f"{page_number} since it could not be loaded"
-                )
-                continue
-
-            caption = caption_image(image_file.image)
-
-            # sleep for a bit to avoid rate limiting
-            time.sleep(5)
-
-            if caption is None:
-                print(
-                    f"[!] Failed to generate a caption for image "
-                    f"{image_file.name} on page {page_number}"
-                )
-                continue
-
-            image_captions.setdefault(page_number, {}).update(
-                {image_file.name: caption}
-            )
-
-            print(
-                f"Image {image_file.name} on page {page_number} has the "
-                f"following caption: {caption}"
-            )
+    images_files = extract_images_from_pdf(pdf_reader)
+    image_captions = generate_image_captions(
+        images_files,
+        seconds_to_sleep_between_requests=parsed_args[
+            "seconds_to_sleep_between_requests"
+        ],
+    )
 
     docs = [
         page.extract_text(
@@ -70,13 +61,14 @@ def main(args: Optional[Sequence[str]] = None) -> int:
     ]
 
     # add image caption information to the extracted text
-    for page_number, captions in image_captions.items():
-        for image_name, caption in captions.items():
-            docs[page_number] += f"\n\nImage {image_name}: {caption}"
+    extracted_data = format_extracted_data(docs, image_captions)
 
-    # print the final document
-    for page_number, doc in enumerate(docs):
-        print(f"Page {page_number}:\n{doc}")
+    if parsed_args["output"]:
+        with open(parsed_args["output"], "w", encoding="utf-8") as f:
+            f.write(extracted_data)
+
+    else:
+        print(extracted_data)
 
     return 0
 
