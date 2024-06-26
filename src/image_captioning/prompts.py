@@ -1,6 +1,6 @@
 import textwrap
 
-_PROMPTS = [
+_RAW_PROMPTS = [
     """
     Describe the image in detail. Please specify any objects within the
     image, backgrounds, scenery, interactions, and gestures or poses.
@@ -68,8 +68,9 @@ _PROMPTS = [
 ]
 
 # Remove newlines and leading/trailing whitespace
-prompts = [
-    textwrap.dedent(prompt).replace("\n", " ").strip() for prompt in _PROMPTS
+PROMPTS = [
+    textwrap.dedent(prompt).replace("\n", " ").strip()
+    for prompt in _RAW_PROMPTS
 ]
 
 
@@ -84,4 +85,4 @@ def main(prompts):
 
 
 if __name__ == "__main__":
-    main(prompts)
+    main(PROMPTS)

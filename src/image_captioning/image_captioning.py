@@ -9,7 +9,7 @@ from PIL.Image import Image
 
 from src.settings import settings
 
-from .prompts import prompts
+from .prompts import PROMPTS
 
 
 @functools.lru_cache
@@ -34,7 +34,7 @@ def get_image_captioning_model():
 )
 def caption_image(image: Image) -> Union[str, None]:
     model = get_image_captioning_model()
-    prompt = random.choice(prompts)  # randomly select a prompt
+    prompt = random.choice(PROMPTS)  # randomly select a prompt
 
     response = model.generate_content([prompt, image])
 
