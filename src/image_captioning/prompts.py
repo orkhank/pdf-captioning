@@ -76,15 +76,15 @@ PROMPTS = [
 ]
 
 
-def main(prompts):
-    """Prints the prompts to the console."""
+def main():
+    """Prints the processed prompts to the console."""
     fill_width = 80
 
     print("Prompts:")
-    for prompt in prompts:
+    for prompt in PROMPTS:
         print("-" * fill_width)
         print(textwrap.fill(prompt, width=fill_width))
 
 
 if __name__ == "__main__":
-    main(PROMPTS)
+    main()
