@@ -38,4 +38,8 @@ def caption_image(image: Image) -> Union[str, None]:
 
     response = model.generate_content([prompt, image])
 
+    parts = response.parts
+    if not parts:
+        return None
+
     return response.text
