@@ -36,7 +36,7 @@ def extract_images_from_pdf(
                 f"in page {page.page_number}"
             )
         else:
-            print(f"[!] No images found on page {page.page_number}")
+            print(f"[-] No images found on page {page.page_number}")
 
         images[page.page_number] = page.images
 
