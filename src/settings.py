@@ -4,6 +4,9 @@ from pydantic import Field
 from pydantic_core import ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# where to load the environment variables from
+ENV_FILE = "config/.env"
+
 
 class Settings(BaseSettings):
     """
@@ -29,7 +32,7 @@ class Settings(BaseSettings):
     """
 
     model_config = SettingsConfigDict(
-        env_file="config/.env", env_file_encoding="utf-8"
+        env_file=ENV_FILE, env_file_encoding="utf-8"
     )
 
     google_api_key: str
