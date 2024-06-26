@@ -12,8 +12,11 @@ class Settings(BaseSettings):
     """
     This class is used to define the settings for the application.
 
+    All settings are loaded from environment variables. The settings are used
+    to configure the application, and can be changed by setting the
+    corresponding environment variables.
+
     Attributes:
-        model_config (SettingsConfigDict): Configuration for the settings.
         google_api_key (str): Google API key.
         generative_model_name (str): The name of the generative model to use \
             for image captioning. See\
