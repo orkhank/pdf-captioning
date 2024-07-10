@@ -18,11 +18,6 @@ class Settings(BaseSettings):
 
     Attributes:
         google_api_key (str): Google API key.
-        generative_model_name (str): The name of the generative model to use \
-            for image captioning. See\
-    [the documentation](https://ai.google.dev/gemini-api/docs/models/gemini)\
-            for the available models. The chosen model must support \
-            image inputs.
         backoff_max_tries (Optional[int]): The maximum number of attempts to \
             make at generating a caption for an image before giving up. \
             Once exhausted, the exception will be allowed to escape. \
@@ -39,13 +34,6 @@ class Settings(BaseSettings):
     )
 
     google_api_key: str
-    generative_model_name: str = Field(
-        default="gemini-1.5-flash",
-        description="The name of the generative model to use for image "
-        "captioning. See the documentation at "
-        "https://ai.google.dev/gemini-api/docs/models/gemini "
-        "for the available models.",
-    )
     backoff_max_tries: Optional[int] = Field(
         default=None,
         description="The maximum number of attempts to make at generating a "

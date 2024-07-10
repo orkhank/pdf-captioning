@@ -4,8 +4,9 @@ from typing import Any, Dict, Optional, Sequence
 
 from pypdf import PdfReader
 
-from .utils import (extract_images_from_pdf, format_extracted_data,
-                    generate_image_captions)
+from src.image_captioning.image_captioning import ImageCaptioner
+from src.pdf_captioning.formatting import DefaultFormatter
+from src.pdf_captioning.pdf_captioning import generate_image_captions
 
 
 def parse_args(args: Optional[Sequence[str]] = None) -> Dict[str, Any]:
@@ -15,10 +16,12 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Dict[str, Any]:
         "captions for images.",
     )
 
-    parser.add_argument(
+    pdf_reader_args = parser.add_argument_group("PDF Reader Arguments")
+    pdf_reader_args.add_argument(
         "pdf",
         type=str,
-        help="the path to the PDF file",
+        help="the path to the PDF file to extract text from and generate "
+        "image captions for.",
     )
 
     parser.add_argument(
@@ -45,24 +48,24 @@ def main(args: Optional[Sequence[str]] = None) -> int:
     parsed_args = parse_args(args)
 
     pdf_reader = PdfReader(parsed_args["pdf"])
-
-    images_files = extract_images_from_pdf(pdf_reader)
     image_captions = generate_image_captions(
-        images_files,
+        pdf_reader=pdf_reader,
+        image_captioner=ImageCaptioner(),
         seconds_to_sleep_between_requests=parsed_args[
             "seconds_to_sleep_between_requests"
         ],
     )
+    from pprint import pprint
+    pprint(image_captions)
 
-    docs = [
+    extracted_text = [
         page.extract_text(
             extraction_mode="layout", layout_mode_space_vertically=False
         )
         for page in pdf_reader.pages
     ]
 
-    # add image caption information to the extracted text
-    extracted_data = format_extracted_data(docs, image_captions)
+    extracted_data = DefaultFormatter().format(extracted_text, image_captions)
 
     if parsed_args["output"]:
         with open(parsed_args["output"], "w", encoding="utf-8") as f:
